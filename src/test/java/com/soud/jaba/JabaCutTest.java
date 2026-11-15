@@ -125,9 +125,11 @@ public class JabaCutTest {
 
     @Test
     public void testAdditional() {
+        jaba.cut("", CutModeEnum.CUT);
         jaba.cut("“Microsoft”", CutModeEnum.CUT);
         jaba.cut("干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 ", CutModeEnum.CUT);
         jaba.cut("AT&T是一件不错的公司，给你发offer了吗？", CutModeEnum.CUT);
+        jaba.cut("枪杆子中出政权", CutModeEnum.CUT); // e41~com.soud.jaba.Jaba.doIfNeedHMM(Jaba.java:122)114 e42~com.soud.jaba.Jaba.doIfNeedHMM(Jaba.java:122)114
     }
 
     @Test
