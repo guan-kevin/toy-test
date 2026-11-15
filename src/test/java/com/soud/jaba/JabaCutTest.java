@@ -125,6 +125,7 @@ public class JabaCutTest {
 
     @Test
     public void testAdditional() {
+        jaba.cut("我来到北京清华大学", CutModeEnum.CUT_ALL); // e55~com.soud.jaba.Jaba.lambda$cutAll$1(Jaba.java:164)163, e41~com.soud.jaba.Jaba.cut(Jaba.java:59)53 e42~com.soud.jaba.Jaba.cut(Jaba.java:59)53
         jaba.cut("", CutModeEnum.CUT);
         jaba.cut("“Microsoft”", CutModeEnum.CUT);
         jaba.cut("干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 ", CutModeEnum.CUT);
