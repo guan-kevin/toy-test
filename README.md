@@ -1,65 +1,114 @@
-结巴分词(java版) jaba
-===============================
+# java.math.expression.parser
+java math expression parser is a maven project that lets you parse or evaluate math expressions.
+
+This algorithm does not use a decision tree. It is a kind of Recursive Descent Parser (https://en.wikipedia.org/wiki/Recursive_descent_parser). In fact, it is LR parser (Left-Right Parser) without backtracking.
+
+This algorithm is faster than JEP math expresion parser!!! If you compare java.math.expression.parse and JEP, this algorithm only needs 25% of the time to parse the same expression as JEP. With other algorithms that use trees like:
+
+                                                                                       ---------
+                                                                                       |   +   |
+                                                                                       ---------
+                                                                                           |
+                                                                                    ---------------
+                                                                                    |             |
+                                                                                ---------     ---------
+                                                                                |   1   |     |   *   |
+                                                                                ---------     ---------
+                                                                                
+ It is even faster than them. This library is 10 times faster and **it is tested using matlab**. The python version of this library is pymep. You can find pymep in my github repository.
+ 
+## Features
+
+### math functions
+
+- sin, cos, sinh, cosh, tan, tanh, asin, acos, atan
+- pi, e
+- ln (natural logarithm), log (decimal logarithm)
+- sqrt, cbrt
+- radians or degrees
+- complex or real numbers
+
+### parentheses 
+
+ - (...)
+ 
+ ### variables: 
+ 
+ - Expressions in vars
+ 
+       String f_xs = "x+5*y+(3 -y)";
+       final Point xo = new Point("x", "1+1");
+       final Point yo = new Point("y", "0+2*0+1*5-5 +1^4")
+ 
+                                    
+## Examples:
+ 
+ In the test package you can see more examples with different constructors 
+
+### Real numbers
+
+        Parser.simpleEval("6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4"); --> for real functions
+
+        String f_x = "+3 +5*5*(+1)";
+
+        ParserResult result = Parser.eval(f_x); --> for real or complex functions
+        assertTrue(result.getValue() == 28.0);
+
+        final Point xo = new Point("x", new Double(2));
+        f_x = "2.35*e^(-3)*x";
+
+        result = Parser.eval(f_x, xo);  --> for real or complex functions with real or complex vars
+        assertTrue(result.getValue() == 0.2339992213289606);
+
+        final Point xo = new Point("x", new Double(2));
+        final Point zo = new Point("z", new Double(1));
+        String f_xs = " 2*(-(((z*3)*sqrt(x^(2)))+3))";        
+        
+        Parser.eval(f_xs, xo, zo); --> multiple vars
+        
+        String f_xs = "x+5*y+(3 -y)";
+        final Point xo = new Point("x", "1+1");
+        final Point yo = new Point("y", "0+2*0+1*5-5 +1^4"); //math expression in vars
+
+        ParserResult result = Parser.eval(f_xs, xo, yo);
+		
+       
+      
+### Complex numbers
+        
+	    String f_x = " e^(1*x*acos((3/2-2j)^(pi)))";
+        
+        Point xo = new Point("x", new Complex(1, 2)); --> complex var: 1+ 2j
+        ParserResult result = Parser.eval(f_x, xo);
+        
+        String f_x = "1+j +x";
+        final Point xo = new Point("x", "2 +j"); //complex math expression in vars
+
+        ParserResult result = Parser.eval(f_x, xo);
+     
+### Execution time
+ 
+       These are the results for the version 3.0 (master). You can check the speedTests in the project
+  
+	   Parser.simpleEval("6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3
+                              + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 
+			      -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4");
+
+       CPU: i7-6500U
+       
+       test 1: one execution: 3ms
+       test 2: 100000 executions : 2100 ms --> mean time 0.021 ms per execution 
+                                   (with graalvm-jdk-17.0.8+9.1 the total time is 754ms --> 0.00754 per execution) 
+       test 3: one million executions: 16500 ms --> mean time 0.0165 ms per execution 
+                                   (with graalvm-jdk-17.0.8+9.1 the total time is 7980ms --> 0,00798 per execution) 
 
 
-感谢jieba分词原作者[fxsjy](https://github.com/fxsjy)，本项目实现了 java 版本的 jieba。
+This version is compiled for Java 1.6
 
-创建此项目起因：[jieba-analysis](https://github.com/huaban/jieba-analysis)这个项目分词的结果和python版本不一致，还会把英文字母全部改为小写。所以我重新实现了一下 java 版本的 jieba，保证了分词结果和 python 版本一致，并且分词速度快一倍（不算加载字典时间）。
+If you are interested in maths, you can visit my java numerical library in my github repository which uses java.math.expression.parser to evaluate functions.
 
+## Professional Services
+If you are interested in logical parsers or any task related to parsers, you can consult my professional services page https://github.com/sbesada/professional.services        
 
-简介
-====
-
-支持分词模式
-------------
-
--   CUT——精确模式，试图将句子最精确地切开，适合文本分析。
--   CUT_ALL——全模式，把句子中所有的可以成词的词语都扫描出来, 速度非常快，但是不能解决歧义。
--   CUT_WITHOUT_HMM——精确模式，但不使用HMM识别未登录词。
-
-
-支持提取关键词
-------------
-
-新增支持TF-IDF模式的关键词提取，保持和python版本结果一致。默认提取top 20个。
-``` java
-TFIDFAnalyzer.getInstance().extractTags(List<String> words, int topK)
-TFIDFAnalyzer.getInstance().extractTags(String sentence, int topK)
-```
-自定义IDF文件或停顿词文件：
-```java
-TFIDFAnalyzer.getInstance().loadStopWords(InputStream resourceStream) 
-TFIDFAnalyzer.getInstance().loadIdfMap(InputStream resourceStream) 
-```
-
-如何使用
-========
-
--   Demo
-
-``` {.java}
-
-@Test
-public void testDemo() {
-    Jaba jaba = Jaba.getInstance();
-    String[] sentences =
-            new String[] {"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。", "我不喜欢日本和服。", "雷猴回归人间。",
-                    "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作", "结果婚的和尚未结过婚的"};
-    for (String sentence : sentences) {
-        System.out.println(jaba.cut(sentence, CutModeEnum.CUT).toString());
-    }
-
-    // td-idf 关键词提取
-    String sentence = "此外，公司拟对全资子公司吉林欧亚置业有限公司增资4.3亿元，增资后，吉林欧亚置业注册资本由7000万元增加到5亿元。吉林欧亚置业主要经营范围为房地产开发及百货零售等业务。目前在建吉林欧亚城市商业综合体项目。2013年，实现营业收入0万元，实现净利润-139.13万元。";
-    TFIDFAnalyzer.getInstance().extractTags(sentence).forEach(System.out::println);
-}
-```
-
-算法
-=================
-
--   \[ \] 基于 `AhoCorasickDoubleArrayTrie` 树结构存储的词典，性能比 `trie` 树更好
--   \[ \] 生成所有切词可能的有向无环图 `DAG`
--   \[ \] 采用动态规划算法计算最佳切词组合
--   \[ \] 基于 `HMM` 模型，采用 `Viterbi` (维特比)算法实现未登录词识别
-
+## Donation
+If you think that my work deserves a donation, you can do it: https://sbesada.github.io/
