@@ -11,7 +11,7 @@ public class SpeedTest {
 		Parser.simpleEval(
 				"6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4");
 		final long time2 = System.currentTimeMillis();
-		System.out.println("time test one:" + (time2 - time1));
+		testTwoHelper("time test one:", time2, time1);
 
 	}
 
@@ -26,14 +26,12 @@ public class SpeedTest {
 		}
 
 		final long time2 = System.currentTimeMillis();
-		System.out.println("time test two:" + (time2 - time1));
+		testTwoHelper("time test two:", time2, time1);
 
 	}
 
-	@Test
-	public void testTwoClone() {
-		Parser.simpleEval(
-				"6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4");
+	private void testTwoHelper(String msg, long time2, long time1) {
+		System.out.println(msg + (time2 - time1));
 	}
 
 	@Test
@@ -42,7 +40,7 @@ public class SpeedTest {
 		final long time1 = System.currentTimeMillis();
 		Parser.simpleEval("6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4");
 		final long time2 = System.currentTimeMillis();
-		System.out.println("time test three:" + (time2 - time1));
+		testTwoHelper("time test three:", time2, time1);
 
 	}
 }
