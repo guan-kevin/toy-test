@@ -1,114 +1,50 @@
-# java.math.expression.parser
-java math expression parser is a maven project that lets you parse or evaluate math expressions.
+# GramTest
+This tool allows you to generate test cases based on arbitrary user defined grammars. The input grammar is given in BNF notation. Potential applications include fuzzing and automated testing.
 
-This algorithm does not use a decision tree. It is a kind of Recursive Descent Parser (https://en.wikipedia.org/wiki/Recursive_descent_parser). In fact, it is LR parser (Left-Right Parser) without backtracking.
+## Instructions
+We use maven as our build tool. When you compile the project using maven (`mvn clean package`) it will generate a single all dependencies Jar, that can be run from the command line as follows:
 
-This algorithm is faster than JEP math expresion parser!!! If you compare java.math.expression.parse and JEP, this algorithm only needs 25% of the time to parse the same expression as JEP. With other algorithms that use trees like:
+`java -jar gramtest.jar -file grammar.bnf`
 
-                                                                                       ---------
-                                                                                       |   +   |
-                                                                                       ---------
-                                                                                           |
-                                                                                    ---------------
-                                                                                    |             |
-                                                                                ---------     ---------
-                                                                                |   1   |     |   *   |
-                                                                                ---------     ---------
-                                                                                
- It is even faster than them. This library is 10 times faster and **it is tested using matlab**. The python version of this library is pymep. You can find pymep in my github repository.
- 
-## Features
+To take a look at all the additional options, you can run `java -jar gramtest.jar -h` which will print the details as below.
 
-### math functions
+```
+usage: gramtest [options]
+ -dep <depth of rules>         maximum depth for recursive rules
+ -ext <extension>              file extension for generated tests
+ -file <grammar file>          path to the grammar file (in BNF notation)
+ -h,--help                     prints this message
+ -max <max size of test>       maximum size of each generated test
+ -min <min size of test>       minimum size of each generated test
+ -mingen <minimal generator>   use minimal sentence generation
+                               (true/false)
+ -num <number of tests>        maximum number of test cases
+ -tests <test folder>          path to the folder to store generated tests
+```
 
-- sin, cos, sinh, cosh, tan, tanh, asin, acos, atan
-- pi, e
-- ln (natural logarithm), log (decimal logarithm)
-- sqrt, cbrt
-- radians or degrees
-- complex or real numbers
+## Bugs found using GramTest
+| Project | Reference | Status |
+|---------|---------|--------|
+| Apache Commons Validator | https://issues.apache.org/jira/browse/VALIDATOR-410 | Open | 
+| segmentio/is-url | https://github.com/segmentio/is-url/issues/15 | Open |
+| gajus/url-regexp | https://github.com/gajus/url-regexp/issues/6 | Open |
+| segmentio/is-url | https://github.com/segmentio/is-url/issues/21 | Open |
 
-### parentheses 
+## Articles
+- [Continuous fuzzing of Java projects with GramTest](https://lambdasec.github.io/Fuzzing-Java-Libraries-with-GramTest/)
+- [How does grammar-based test case generation work?](https://www.veracode.com/blog/managing-appsec/how-does-grammar-based-test-case-generation-work)
+- [Practical tips for implementing grammar-based test case generation](https://www.veracode.com/blog/secure-development/practical-tips-implementing-grammar-based-test-case-generation)
 
- - (...)
- 
- ### variables: 
- 
- - Expressions in vars
- 
-       String f_xs = "x+5*y+(3 -y)";
-       final Point xo = new Point("x", "1+1");
-       final Point yo = new Point("y", "0+2*0+1*5-5 +1^4")
- 
-                                    
-## Examples:
- 
- In the test package you can see more examples with different constructors 
+## FAQ
 
-### Real numbers
+- _Can I use this particular grammar with GramTest?_
 
-        Parser.simpleEval("6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4"); --> for real functions
+As long as the input grammar is described in BNF it is possible to use it with GramTest to generate random strings. Several grammars that you find online are not given in proper BNF format, have comments/text in some productions, or do not have complete clauses. Verify that the grammar you are using doesn't have any bugs before using it. 
 
-        String f_x = "+3 +5*5*(+1)";
+- _Why did you choose BNF and not EBNF/ABNF/etc. as the input format for GramTest?_
 
-        ParserResult result = Parser.eval(f_x); --> for real or complex functions
-        assertTrue(result.getValue() == 28.0);
+BNF was the simplest of all formats to use, it is certainly possible to implement another input format but it is going to be a non-trivial excercise. You will need to implement your own [generator](https://github.com/codelion/gramtest/blob/master/src/main/java/com/sourceclear/gramtest/GeneratorVisitor.java) that can create strings based on each type of production in the grammar. 
 
-        final Point xo = new Point("x", new Double(2));
-        f_x = "2.35*e^(-3)*x";
+- _Where can I find some sample BNF grammars to use?_
 
-        result = Parser.eval(f_x, xo);  --> for real or complex functions with real or complex vars
-        assertTrue(result.getValue() == 0.2339992213289606);
-
-        final Point xo = new Point("x", new Double(2));
-        final Point zo = new Point("z", new Double(1));
-        String f_xs = " 2*(-(((z*3)*sqrt(x^(2)))+3))";        
-        
-        Parser.eval(f_xs, xo, zo); --> multiple vars
-        
-        String f_xs = "x+5*y+(3 -y)";
-        final Point xo = new Point("x", "1+1");
-        final Point yo = new Point("y", "0+2*0+1*5-5 +1^4"); //math expression in vars
-
-        ParserResult result = Parser.eval(f_xs, xo, yo);
-		
-       
-      
-### Complex numbers
-        
-	    String f_x = " e^(1*x*acos((3/2-2j)^(pi)))";
-        
-        Point xo = new Point("x", new Complex(1, 2)); --> complex var: 1+ 2j
-        ParserResult result = Parser.eval(f_x, xo);
-        
-        String f_x = "1+j +x";
-        final Point xo = new Point("x", "2 +j"); //complex math expression in vars
-
-        ParserResult result = Parser.eval(f_x, xo);
-     
-### Execution time
- 
-       These are the results for the version 3.0 (master). You can check the speedTests in the project
-  
-	   Parser.simpleEval("6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3
-                              + (3.5^3+7/2)^3 -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 
-			      -(5*4/(2-3))*4 + 6.5*7.8^2.3 + (3.5^3+7/2)^3 -(5*4/(2-3))*4");
-
-       CPU: i7-6500U
-       
-       test 1: one execution: 3ms
-       test 2: 100000 executions : 2100 ms --> mean time 0.021 ms per execution 
-                                   (with graalvm-jdk-17.0.8+9.1 the total time is 754ms --> 0.00754 per execution) 
-       test 3: one million executions: 16500 ms --> mean time 0.0165 ms per execution 
-                                   (with graalvm-jdk-17.0.8+9.1 the total time is 7980ms --> 0,00798 per execution) 
-
-
-This version is compiled for Java 1.6
-
-If you are interested in maths, you can visit my java numerical library in my github repository which uses java.math.expression.parser to evaluate functions.
-
-## Professional Services
-If you are interested in logical parsers or any task related to parsers, you can consult my professional services page https://github.com/sbesada/professional.services        
-
-## Donation
-If you think that my work deserves a donation, you can do it: https://sbesada.github.io/
+Several examples are available in the [test folder](https://github.com/codelion/gramtest/tree/master/src/test/resources). You can refer to the unit tests to see how they can be used.

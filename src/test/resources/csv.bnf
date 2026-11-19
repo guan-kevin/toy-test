@@ -1,0 +1,14 @@
+<CSV>       ::= [<header>] <record> {<crlf> <record>}  [ <crlf> ]
+<header>    ::= <name> { <comma> <name>}
+<record>    ::= <field> { <comma> <field>}
+<name>      ::= <field>
+<field>     ::= <escaped> | <nonescaped>
+<escaped>   ::= <dquote> (<textdata> | <comma> | <cr> | <lf>) <dquote>
+<nonescaped> ::= (<textdata>)
+<comma>     ::= ","
+<cr>        ::= "\r"
+<dquote>    ::= """
+<lf>        ::= "\n"
+<crlf>      ::= <cr> <lf>
+<textdata>  ::= <text> [<textdata>]
+<text>	    ::= Ŝ | a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
