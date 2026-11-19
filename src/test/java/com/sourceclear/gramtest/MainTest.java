@@ -92,7 +92,7 @@ public class MainTest {
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     bnfParser grammarparser = new bnfParser(tokens);
     ParserRuleContext tree = grammarparser.rulelist();
-    GeneratorVisitor extractor = new GeneratorVisitor(20,2,10,100,true);
+    GeneratorVisitor extractor = new GeneratorVisitor(100,2,10,100,true);
     extractor.visit(tree);
     List<String> generatedTests = extractor.getTests();
   }
