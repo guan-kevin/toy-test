@@ -1,59 +1,72 @@
-[![Build Status](https://travis-ci.org/fusion-jena/JaroWinklerSimilarity.svg?branch=master)](https://travis-ci.org/fusion-jena/JaroWinklerSimilarity)
-[![Javadocs](https://javadoc.io/badge/de.uni_jena.cs.fusion/similarity.jarowinkler.svg)](https://javadoc.io/doc/de.uni_jena.cs.fusion/similarity.jarowinkler)
-[![Maven Central](https://img.shields.io/maven-central/v/de.uni_jena.cs.fusion/similarity.jarowinkler.svg?label=Maven%20Central)](https://search.maven.org/artifact/de.uni_jena.cs.fusion/similarity.jarowinkler/)
+# GraphStream
 
-# Jaro Winkler Similarity
 
-This is a Java implementation of the Jaro Winkler Similarity, which is optimized for the search of similar strings in a large set of strings.
+[![Build Status](https://travis-ci.org/graphstream/gs-core.svg?branch=dev)](https://travis-ci.org/graphstream/gs-core)
 
-## Usage
+The GraphStream project is a java library that provides an API to model,
+analyze and visualize graphs and dynamic graphs.
 
-Binaries are available on the central Maven repositories:
+Check out the Website <http://www.graphstream-project.org/> for more information.
 
+## Installing GraphStream
+
+The release comes with a pre-packaged jar file named gs-core.jar that contains the GraphStream classes. To start using GraphStream, simply put it in your class path. You can download GraphStream on the [github releases pages](https://github.com/graphstream/gs-core/releases), or on the website <http://www.graphstream-project.org/>.
+
+Maven users may include major releases of `gs-core` as a dependency:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-core</artifactId>
+        <version>2.0</version>
+    </dependency>
+</dependencies>
 ```
-<dependency>
-    <groupId>de.uni_jena.cs.fusion</groupId>
-    <artifactId>similarity.jarowinkler</artifactId>
-    <version>1.1.0</version>
-</dependency>
+
+### Development Versions
+
+Using <https://jitpack.io> one can also use any development version. Simply add the `jitpack` repository to the `pom.xml` of the project:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 ```
 
-Usage example for similar string search:
+then, add the `gs-core` to your dependencies:
 
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.github.graphstream</groupId>
+        <artifactId>gs-core</artifactId>
+        <version>dev-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
+
+You can use any version of `gs-core` you need. Simply specify the desired version in the `<version>` tag. The version can be a git tag name (e.g. `2.0`), a commit number, or a branch name followed by `-SNAPSHOT` (e.g. `dev-SNAPSHOT`). More details on the [possible versions on jitpack](https://jitpack.io/#graphstream/gs-core).
+
+## User interface
+
+`gs-core` does not ship any default user interface anymore. In order to display graphs, one need a GraphStream viewer (mainly [gs-ui-javafx](https://github.com/graphstream/gs-ui-javafx) or [gs-ui-swing](https://github.com/graphstream/gs-ui-swing)). These are the steps to get a viewer:
+
+1. Download a GraphStream viewer and add the jar to your classpath (or as a dependency to `pom.xml`, for maven users).
+2. Set a system property to tell `gs-core` which viewer to use :
 ```java
-// prepare some Strings
-List<String> terms = Arrays.asList("hello world", "hello universe");
-// prepare the JaroWinklerSimilarity instance
-JaroWinklerSimilarity<String> jws = JaroWinklerSimilarity.with(terms, 0.95);
-// search similar strings
-Map<String, Double> similarStrings = jws.apply("hello word"); // please note the missing "l"
-// results
-assert similarStrings.get("hello world").equals(0.9818181818181819d);
-assert !similarStrings.containsKey("hello universe");
+         System.setProperty("org.graphstream.ui", "javafx");
 ```
+3. Enjoy `Graph.display()` as usual.
 
-Usage example for object search:
+## Help
 
-```java
-// prepare some data
-Map<String, Collection<Integer>> programs = new HashMap<String, Collection<Integer>>();
-Collection<Integer> list = new ArrayList<>();
-Collection<Integer> set = new HashSet<>();
-programs.put("hello world", list);
-programs.put("hello universe", set);
-// prepare the JaroWinklerSimilarity instance
-JaroWinklerSimilarity<Collection<Integer>> jws = JaroWinklerSimilarity.with(programs, 0.95);
-// search matching data
-Map<Collection<Integer>, Double> searchResult = jws.apply("hello word"); // please note the missing "l"
-// results
-assert searchResult.get(list).equals(0.9818181818181819d);
-assert !searchResult.containsKey(set);
-```
+You may check the documentation on the website <http://www.graphstream-project.org/>. 
+You may also share your questions on the mailing list at <http://sympa.litislab.fr/sympa/subscribe/graphstream-users>.
 
-## Publication
-In case you use this implementation for your scientific work, please consider to cite the related paper:
+## License
 
-*Keil, Jan Martin (2019). **Efficient Bounded Jaro-Winkler Similarity Based Search**. In:  Grust, Torsten et al. (Eds.): Datenbanksysteme für Business, Technologie und Web (BTW 2019), Lecture Notes in Informatics (LNI), Gesellschaft für Informatik, Bonn. (pp. 207-216). DOI:[10.18420/btw2019-13](https://doi.org/10.18420/btw2019-13).*
-
-## Acknowledgments
-The development of this Jaro Winkler Similarity implementation was funded by DFG in the scope of the LakeBase project within the Scientific Library Services and Information Systems (LIS) program.
+See the COPYING file.
