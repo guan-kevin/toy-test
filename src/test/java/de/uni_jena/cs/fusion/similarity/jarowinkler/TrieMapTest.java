@@ -350,7 +350,7 @@ public class TrieMapTest {
 		assertEquals("b", bNode.value());
 	}
 
-	//@Test
+	@Test
 	public void memoryConsumption() throws IOException {
 		System.out.println(String.format("Memory consumption of dataset 1 in %s: %s byte", TrieMap.class.getName(), extracted(false)));
 	}
