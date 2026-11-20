@@ -358,11 +358,31 @@ public class TrieMapTest {
 	@Test
 	public void memoryConsumptionClone() throws IOException {
 		TrieMap<String> trieMap = new TrieMap<>();
+		trieMap.put("c", "");
+		trieMap.put("a", "");
+		trieMap.put("b", "");
 
+		trieMap = new TrieMap<>();
 		trieMap.put("e", "");
 		trieMap.put("c", "");
 		trieMap.put("a", "");
 		trieMap.put("d", "");
+
+		trieMap = new TrieMap<>();
+		trieMap.put("e", "");
+		trieMap.put("c", "");
+		trieMap.put("b", "");
+		trieMap.put("a", "");
+		trieMap.put("d", "");
+
+		trieMap = new TrieMap<>();
+		trieMap.put("f", "");
+		trieMap.put("d", "");
+		trieMap.put("c", "");
+		trieMap.put("b", "");
+		trieMap.put("a", "");
+		trieMap.put("e", "");
+
 		System.out.println(String.format("Memory consumption of dataset 1 in %s: %s byte", TrieMap.class.getName(), extracted(true)));
 	}
 
