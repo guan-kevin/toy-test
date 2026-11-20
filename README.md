@@ -1,50 +1,59 @@
-# GramTest
-This tool allows you to generate test cases based on arbitrary user defined grammars. The input grammar is given in BNF notation. Potential applications include fuzzing and automated testing.
+[![Build Status](https://travis-ci.org/fusion-jena/JaroWinklerSimilarity.svg?branch=master)](https://travis-ci.org/fusion-jena/JaroWinklerSimilarity)
+[![Javadocs](https://javadoc.io/badge/de.uni_jena.cs.fusion/similarity.jarowinkler.svg)](https://javadoc.io/doc/de.uni_jena.cs.fusion/similarity.jarowinkler)
+[![Maven Central](https://img.shields.io/maven-central/v/de.uni_jena.cs.fusion/similarity.jarowinkler.svg?label=Maven%20Central)](https://search.maven.org/artifact/de.uni_jena.cs.fusion/similarity.jarowinkler/)
 
-## Instructions
-We use maven as our build tool. When you compile the project using maven (`mvn clean package`) it will generate a single all dependencies Jar, that can be run from the command line as follows:
+# Jaro Winkler Similarity
 
-`java -jar gramtest.jar -file grammar.bnf`
+This is a Java implementation of the Jaro Winkler Similarity, which is optimized for the search of similar strings in a large set of strings.
 
-To take a look at all the additional options, you can run `java -jar gramtest.jar -h` which will print the details as below.
+## Usage
+
+Binaries are available on the central Maven repositories:
 
 ```
-usage: gramtest [options]
- -dep <depth of rules>         maximum depth for recursive rules
- -ext <extension>              file extension for generated tests
- -file <grammar file>          path to the grammar file (in BNF notation)
- -h,--help                     prints this message
- -max <max size of test>       maximum size of each generated test
- -min <min size of test>       minimum size of each generated test
- -mingen <minimal generator>   use minimal sentence generation
-                               (true/false)
- -num <number of tests>        maximum number of test cases
- -tests <test folder>          path to the folder to store generated tests
+<dependency>
+    <groupId>de.uni_jena.cs.fusion</groupId>
+    <artifactId>similarity.jarowinkler</artifactId>
+    <version>1.1.0</version>
+</dependency>
 ```
 
-## Bugs found using GramTest
-| Project | Reference | Status |
-|---------|---------|--------|
-| Apache Commons Validator | https://issues.apache.org/jira/browse/VALIDATOR-410 | Open | 
-| segmentio/is-url | https://github.com/segmentio/is-url/issues/15 | Open |
-| gajus/url-regexp | https://github.com/gajus/url-regexp/issues/6 | Open |
-| segmentio/is-url | https://github.com/segmentio/is-url/issues/21 | Open |
+Usage example for similar string search:
 
-## Articles
-- [Continuous fuzzing of Java projects with GramTest](https://lambdasec.github.io/Fuzzing-Java-Libraries-with-GramTest/)
-- [How does grammar-based test case generation work?](https://www.veracode.com/blog/managing-appsec/how-does-grammar-based-test-case-generation-work)
-- [Practical tips for implementing grammar-based test case generation](https://www.veracode.com/blog/secure-development/practical-tips-implementing-grammar-based-test-case-generation)
+```java
+// prepare some Strings
+List<String> terms = Arrays.asList("hello world", "hello universe");
+// prepare the JaroWinklerSimilarity instance
+JaroWinklerSimilarity<String> jws = JaroWinklerSimilarity.with(terms, 0.95);
+// search similar strings
+Map<String, Double> similarStrings = jws.apply("hello word"); // please note the missing "l"
+// results
+assert similarStrings.get("hello world").equals(0.9818181818181819d);
+assert !similarStrings.containsKey("hello universe");
+```
 
-## FAQ
+Usage example for object search:
 
-- _Can I use this particular grammar with GramTest?_
+```java
+// prepare some data
+Map<String, Collection<Integer>> programs = new HashMap<String, Collection<Integer>>();
+Collection<Integer> list = new ArrayList<>();
+Collection<Integer> set = new HashSet<>();
+programs.put("hello world", list);
+programs.put("hello universe", set);
+// prepare the JaroWinklerSimilarity instance
+JaroWinklerSimilarity<Collection<Integer>> jws = JaroWinklerSimilarity.with(programs, 0.95);
+// search matching data
+Map<Collection<Integer>, Double> searchResult = jws.apply("hello word"); // please note the missing "l"
+// results
+assert searchResult.get(list).equals(0.9818181818181819d);
+assert !searchResult.containsKey(set);
+```
 
-As long as the input grammar is described in BNF it is possible to use it with GramTest to generate random strings. Several grammars that you find online are not given in proper BNF format, have comments/text in some productions, or do not have complete clauses. Verify that the grammar you are using doesn't have any bugs before using it. 
+## Publication
+In case you use this implementation for your scientific work, please consider to cite the related paper:
 
-- _Why did you choose BNF and not EBNF/ABNF/etc. as the input format for GramTest?_
+*Keil, Jan Martin (2019). **Efficient Bounded Jaro-Winkler Similarity Based Search**. In:  Grust, Torsten et al. (Eds.): Datenbanksysteme für Business, Technologie und Web (BTW 2019), Lecture Notes in Informatics (LNI), Gesellschaft für Informatik, Bonn. (pp. 207-216). DOI:[10.18420/btw2019-13](https://doi.org/10.18420/btw2019-13).*
 
-BNF was the simplest of all formats to use, it is certainly possible to implement another input format but it is going to be a non-trivial excercise. You will need to implement your own [generator](https://github.com/codelion/gramtest/blob/master/src/main/java/com/sourceclear/gramtest/GeneratorVisitor.java) that can create strings based on each type of production in the grammar. 
-
-- _Where can I find some sample BNF grammars to use?_
-
-Several examples are available in the [test folder](https://github.com/codelion/gramtest/tree/master/src/test/resources). You can refer to the unit tests to see how they can be used.
+## Acknowledgments
+The development of this Jaro Winkler Similarity implementation was funded by DFG in the scope of the LakeBase project within the Scientific Library Services and Information Systems (LIS) program.
