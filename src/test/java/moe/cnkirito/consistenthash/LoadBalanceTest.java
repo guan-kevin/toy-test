@@ -58,6 +58,11 @@ public class LoadBalanceTest {
         testNodeAddAndRemoveExtracted(10000);
     }
 
+    @Test
+    public void testNodeAddAndRemoveClone() {
+        testNodeAddAndRemoveExtracted(3);
+    }
+
     public void testNodeAddAndRemoveExtracted(int iteration) {
         List<Server> servers = new ArrayList<>();
         for (String ip : ips) {
