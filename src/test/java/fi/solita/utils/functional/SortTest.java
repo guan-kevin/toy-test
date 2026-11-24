@@ -10,12 +10,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 class TestClass {
-    double id = Math.random();
+    double id = Math.random(); // e157
 }
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SortTest {
     
     Function1<TestClass,Double> accessor = new Function1<TestClass,Double>() {
@@ -26,13 +29,13 @@ public class SortTest {
     };
 
     @Test
-    public void testSort() {
-        extracted(false);
+    public void test0Sort() {
+        extracted(true);
     }
 
     @Test
-    public void testSortClone() {
-        extracted(true);
+    public void testSort() {
+        extracted(false);
     }
 
     public void extracted(boolean cloned) {
@@ -62,7 +65,7 @@ public class SortTest {
         
         long start = System.nanoTime();
         List<TestClass> regular = new ArrayList<TestClass>(data);
-        java.util.Collections.sort(regular, Compare.by(accessor));
+        java.util.Collections.sort(regular, Compare.by(accessor)); // e45 (Collections_Comparable,invalid_sort) (raw spec)
         regular = regular.subList(0, Math.min(firstToTake, regular.size()));
         long end = System.nanoTime();
         
